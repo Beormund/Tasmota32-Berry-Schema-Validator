@@ -1,7 +1,7 @@
 import sv
 
 sv.formats()
-['%H:%M']
+# ['%H:%M']
 
 var schema = {
                 "type": "map",
@@ -68,7 +68,6 @@ var result = sv.validate(schema, data)
 print(result.isValid)
 print(result.errors)
 print(result.data)
-
 # true
 # {}
 # {'id': 9, 'fruit': 'apple', 'off': '10:30', 'days': [1, 0, 1, 1, 1, 1, 0], 'zones': [1, 0, 1], 'nested': {'prop1': [1, 2, 3, 4, 5, 6]}, 'enabled': true, 'on': '14:15'}
@@ -121,7 +120,6 @@ var result = sv.validate(schema, data)
 print(result.isValid)
 print(result.errors)
 print(result.data)
-
 # false
 # {'related_titles.0': 'type must be string', 'related_titles.1': 'type must be string', 'author.age': 'is required'}
 # {'title': 'A Game of Thrones', 'author': {'name': 'George R. R. Marti'}, 'related_titles': ['A Song of Ice and Fire']}
@@ -169,7 +167,7 @@ print(result.data)
 
 sv.add_format("^\\S+@\\S+$", sv.regex, "email")
 sv.formats()
-['%H:%M', 'email']
+# ['%H:%M', 'email']
 
 var schema = {
   "type": "string",

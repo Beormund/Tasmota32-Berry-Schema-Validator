@@ -7,7 +7,65 @@
 
  The following berry types can be validated: map, list, string, int, real, and bool.
 
-  ## Validators
+## Getting Started
+
+```python
+import sv
+
+var schema = {
+    "type": "map",
+    "required": true,
+    "properties": {
+        "title": {
+            "type": 'string',
+            "required": true
+        },
+        "author": {
+            "type": 'map',
+            "required": true,
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "required": true
+                },
+                "age": {
+                    "type": 'int',
+                    "required": true
+                },
+                "city": {
+                    "type": 'string'
+                }
+            }
+        },
+        "related_titles": {
+            "type": 'list',
+            "required": true,
+            "items": {
+                "type": 'string'
+            }
+        }
+    }
+}
+
+var data = {
+    "title": 'A Game of Thrones',
+    "author": {
+        "name": 'George R. R. Marti'
+    },
+    "related_titles": [1, 2, 'A Song of Ice and Fire'],
+    "extra": 'this will get removed'
+}
+
+var result = sv.validate(schema, data)
+print(result.isValid)
+print(result.errors)
+print(result.data)
+
+# false
+# {'related_titles.0': 'type must be string', 'related_titles.1': 'type must be string', 'author.age': 'is required'}
+# {'title': 'A Game of Thrones', 'author': {'name': 'George R. R. Marti'}, 'related_titles': ['A Song of Ice and Fire']}
+```
+## Validators
 
 ### type
 * `string` Validates type of value. Can be one of:
@@ -41,7 +99,7 @@ Invalid object:
 }
 ```
 ### required
-* `boolean` Validates that property exists.
+* `boolean` Validates that property exists and not nil.
 
 Example of schema:
 ```json
@@ -68,7 +126,7 @@ Invalid object:
 
 ### size
 * `int` or `range` Validates that property has the required size. 
-  Applied to `string` or `list`.
+  Applies to `string` or `list`.
 
 Example of schema:
 ```json
@@ -121,13 +179,8 @@ Invalid object:
 }
 ```
 
-### Unknown Keys
-
-* All unknown keys are discarded from the data output.
-
-
 ### items
-* `map` Declares schema for list items. Applied only to `type: "list"`.
+* `map` Declares schema for list items. Applies only to `type: "list"`.
 
 Example of schema:
 ```json
@@ -154,7 +207,7 @@ Invalid object:
   "tags": [ 42 ]
 }
 ```
-## format
+### format
 
 * `string` Declares format string for value. Can be regex or time format string
 
@@ -187,14 +240,14 @@ A list of pre-registered formats can be obtained using sv.formats()
 
 ```python
 sv.formats()
-['%H:%M', 'email']
+# ['%H:%M', 'email']
 ```
 New formats can be registed using sv.add_format(format, engine, label). These will be persisted using Tasmota's persist engine (saved to _persist.json). Engine is either sv.regex or sv.time. 
 
 ```python
 sv.add_format("^\\S+@\\S+$", sv.regex, "email")
 ```
-Don't forget that special characters will need escaping with a backslash.
+Special characters will need escaping with a backslash.
 
 Example of scheme:
 
@@ -228,7 +281,7 @@ Lists can be declared in two ways:
       }
     }
     ```
-2. shortcut syntax using `[]` with single element:
+2. shortcut syntax using `[]` (to imply a list) with single element:
     ```json
     {
       "tags": [{
@@ -238,6 +291,12 @@ Lists can be declared in two ways:
     ```
 
 The validator expands this shortcut into the full form. Both variants are identical.
+
+## Unknown Keys
+
+* All unknown keys are discarded from the data output.
+
+
 
 ## Examples
 
@@ -340,7 +399,7 @@ print(result.errors)
 print(result.data)
 # false
 # {'0': 'Values must be [1, 2, 3]'}
-#[4, 2, 3, 3]
+# [4, 2, 3, 3]
 
 sv.add_format("^\\S+@\\S+$", sv.regex, "email")
 
