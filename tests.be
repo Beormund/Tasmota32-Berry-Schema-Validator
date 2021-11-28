@@ -1,7 +1,7 @@
 import sv
 
 sv.formats()
-['%H:%M']
+# ['%H:%M']
 
 var schema = {
                 "type": "map",
@@ -169,7 +169,7 @@ print(result.data)
 
 sv.add_format("^\\S+@\\S+$", sv.regex, "email")
 sv.formats()
-['%H:%M', 'email']
+# ['%H:%M', 'email']
 
 var schema = {
   "type": "string",
