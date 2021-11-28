@@ -412,7 +412,7 @@ print(result.errors)
 print(result.data)
 # false
 # {'0': 'Values must be [1, 2, 3]'}
-# [4, 2, 3, 3]
+# [2, 3, 3]
 
 sv.add_format("^\\S+@\\S+$", sv.regex, "email")
 
@@ -432,7 +432,7 @@ print(result.errors)
 print(result.data)
 # false
 # {'root': 'Value does not match email'}
-# johnsmith$notreal
+# nil
 
 sv.remove_format("email")
 
