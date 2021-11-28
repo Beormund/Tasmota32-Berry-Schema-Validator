@@ -110,7 +110,7 @@ var schema = {
 var data = {
     "title": 'A Game of Thrones',
     "author": {
-        "name": 'George R. R. Marti'
+        "name": 'George R. R. Martin'
     },
     "related_titles": [1, 2, 'A Song of Ice and Fire'],
     "extra": 'this will get removed'
@@ -122,7 +122,7 @@ print(result.errors)
 print(result.data)
 # false
 # {'related_titles.0': 'type must be string', 'related_titles.1': 'type must be string', 'author.age': 'is required'}
-# {'title': 'A Game of Thrones', 'author': {'name': 'George R. R. Marti'}, 'related_titles': ['A Song of Ice and Fire']}
+# {'title': 'A Game of Thrones', 'author': {'name': 'George R. R. Martin'}, 'related_titles': ['A Song of Ice and Fire']}
 
 var schema = {
   "type": "string",
@@ -162,7 +162,7 @@ print(result.errors)
 print(result.data)
 # false
 # {'0': 'Values must be [1, 2, 3]'}
-# [4, 2, 3, 3]
+# [2, 3, 3]
 
 
 sv.add_format("^\\S+@\\S+$", sv.regex, "email")
@@ -181,7 +181,7 @@ print(result.errors)
 print(result.data)
 # false
 # {'root': 'Value does not match email'}
-# johnsmith$notreal
+# nil
 
 sv.remove_format("email")
 
@@ -211,3 +211,23 @@ print(result.data)
 # true
 # {}
 # [4.3, 2.2, 3.4, 3.7]
+
+var schema = {
+    "type": "map",
+    "required": true,
+    "properties": {
+        "title": {
+            "type": 'string',
+            "required": true
+        }
+    }
+}
+
+var data = {}
+var result = sv.validate(schema, data)
+print(result.isValid)
+print(result.errors)
+print(result.data)
+# false
+# {'title': 'is required'}
+# {}

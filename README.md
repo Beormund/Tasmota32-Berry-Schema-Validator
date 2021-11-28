@@ -5,9 +5,9 @@
 
  To test the module use Main Menu | Consoles | Berry Scripting Console and try out the code in tests.be.
 
- The following berry types can be validated: map, list, string, int, real, and bool.
+ The following berry types can be validated: `map`, `list`, `string`, `int`, `real`, `bool` and `nil`.
 
-## Getting Started
+## Getting Started  
 
 ```python
 import sv
@@ -65,6 +65,19 @@ print(result.data)
 # {'related_titles.0': 'type must be string', 'related_titles.1': 'type must be string', 'author.age': 'is required'}
 # {'title': 'A Game of Thrones', 'author': {'name': 'George R. R. Marti'}, 'related_titles': ['A Song of Ice and Fire']}
 ```
+
+    sv.validate(schema:string, data:string) -> result <instance: Result()>
+
+
+The validate() method takes as input a valid schema `map` and the data to be validated. The method returns a `Result` instance with the following properties:  
+
+    result.isValid
+    result.errors
+    result.data
+
+
+Result.isValid is a `bool` indicating success or failure. Result.errors is a `map` where the keys indicate the property path, and the value describes the validation error. Result.data is the cleaned data. NB: Failed attribtes are removed so consider Result.data as cleaned data.
+
 ## Validators
 
 ### type

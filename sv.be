@@ -91,17 +91,17 @@ class Validate
         path = path.concat('.')
         self.errors[path] = error
     end
-    def isValid(node, data, name, path, errors)
+    def isValid(node, data, name, value, path, errors)
         self.node = node
         self.name = name
         self.path = path
         self.errors = errors
-        self.value = data.contains(name) ? data[name] : nil
+        self.value = value
         if !self.isValidRequired()
             self.addError('is required')
             return false
         end
-        if self.value == nil
+        if self.value == 'undefined'
             return true
         end
         if !self.isValidType()
@@ -110,18 +110,21 @@ class Validate
         end
         if !self.isValidSize()
             self.addError('size must be '.. self.node['size'])
+            return false
         end
         if !self.isValidValues()
             self.addError('Values must be '.. self.node['values'])
+            return false
         end
         if !self.isValidFormat() 
             self.addError('Value does not match '.. self.node['format'])
+            return false
         end
         return true
     end
     def isValidRequired()
         var required = self.node.find('required')
-        return !(self.value == nil && required)
+        return !(self.value == 'undefined' && required)
     end
     def isValidType()
         if !self.node.contains('type')
@@ -206,10 +209,11 @@ class SchemaValidator
                     node['items'].remove('size')
                 end
             end
-            if !self.val.isValid(node, data, name, self.path, self.errors)
+            var value = data.contains(name) ? data[name] : 'undefined'
+            if !self.val.isValid(node, data, name, value, self.path, self.errors)
                 continue
             end
-            if data.find(name) == nil
+            if value == 'undefined'
                 continue
             end
             if node['type'] == 'map'
