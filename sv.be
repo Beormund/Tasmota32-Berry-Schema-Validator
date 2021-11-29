@@ -1,3 +1,9 @@
+# Some of the code is a berry port of a javascript json validator by 
+# nitely: https://github.com/nitely/tiny-json-validator.
+# Thanks also to vitalets: https://github.com/vitalets/json-micro-schema for
+# The list shortcut syntax is based on vitalets' array shortcut syntax.
+# Please mention me if you find this useful. Thanks, Beormund (Shaun Brown)
+
 import persist
 
 var sv = module('sv')
