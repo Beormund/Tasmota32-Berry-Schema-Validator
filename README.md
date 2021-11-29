@@ -65,18 +65,20 @@ print(result.data)
 # {'related_titles.0': 'type must be string', 'related_titles.1': 'type must be string', 'author.age': 'is required'}
 # {'title': 'A Game of Thrones', 'author': {'name': 'George R. R. Marti'}, 'related_titles': ['A Song of Ice and Fire']}
 ```
-
-    sv.validate(schema:string, data:string) -> result <instance: Result()>
-
-
-The validate() method takes as input a valid schema `map` and the data to be validated. The method returns a `Result` instance with the following properties:  
-
-    result.isValid
-    result.errors
-    result.data
+## `sv ` module
 
 
-Result.isValid is a `bool` indicating success or failure. Result.errors is a `map` where the keys indicate the property path, and the value describes the validation error. Result.data is the cleaned data. NB: Failed attribtes are removed so consider Result.data as cleaned data.
+After `import sv` all of the schema validation functionality can be accessed via the `sv` namespace.
+
+Function|Parameters and details
+:---|:---
+sv.validate|`(schema:map, data:string) -> Result`<br>Returns a Result object.<br><br> `Result.isValid` is a `bool` indicating success or failure.<br>`Result.errors` is a `map`. Keys indicate the property path; values describes the validation error.<br>`Result.data` is the cleaned data. Failed attributes are removed.<br><br>Example: `sv.validate({"type":"string", "size":3}, "abc")`
+sv.formats</a>|`() -> list`<br>Returns a list of registered formats<br><br>Example: `sv.formats() -> ["%H:%M", "email"]`
+sv.add_format|`(format:string, engine:[sv.regex, sv.time], label:string) -> nil`<br><br>Persists `format` to flash for future use. The `label` is used as the lookup key and is the value specified in the schema's format validator. The format validator uses the `engine` (currently either `sv.regex` or `sv.time`) to try and match data using the format. If `sv.regex` is specified, the format validator will treat `format` as a regex ccontaining regex conversion specifiers. If `sv.time` is specified, the format validator will interpret `format` as strftime conversion specifiers. <br><br>Examples:<br>`sv.add_format("^\\S+@\\S+$", sv.regex, "email")`<br>`sv.add_format("%H:%M", sv.time, "%H:%M")`<br><br>`var schema = \{"type": "string", "format": "email"}`<br>`var schema = \{"type": "string", "format": "%H:%M"}`
+sv.remove_format|`(label:string) -> nil`<br>Removes a format from flash using `label`.<br><br>Example: `sv.remove_format('email')`
+ |
+
+
 
 ## Validators
 
@@ -249,36 +251,8 @@ Invalid object:
 }
 ```
 
-A list of pre-registered formats can be obtained using sv.formats()
-
-```python
-sv.formats()
-# ['%H:%M', 'email']
-```
-New formats can be registed using sv.add_format(format, engine, label). These will be persisted using Tasmota's persist engine (saved to _persist.json). Engine is either sv.regex or sv.time. 
-
-```python
-sv.add_format("^\\S+@\\S+$", sv.regex, "email")
-```
-Special characters will need escaping with a backslash.
-
-Example of scheme:
-
-```json
-{
-  "time": {
-    "type": "string",
-    "format": "email"
-  }
-}
-```
 The validator will compile and cache formats should they be used multiple times in the same schema.
 
-To remove a format from the pre-configured list use sv.remove_format(label):
-
-```python
-sv.remove_format("email")
-```
 ## Shortcuts
 
 ### Lists
