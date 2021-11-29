@@ -50,7 +50,7 @@ var schema = {
 var data = {
     "title": 'A Game of Thrones',
     "author": {
-        "name": 'George R. R. Marti'
+        "name": 'George R. R. Martin'
     },
     "related_titles": [1, 2, 'A Song of Ice and Fire'],
     "extra": 'this will get removed'
@@ -63,7 +63,7 @@ print(result.data)
 
 # false
 # {'related_titles.0': 'type must be string', 'related_titles.1': 'type must be string', 'author.age': 'is required'}
-# {'title': 'A Game of Thrones', 'author': {'name': 'George R. R. Marti'}, 'related_titles': ['A Song of Ice and Fire']}
+# {'title': 'A Game of Thrones', 'author': {'name': 'George R. R. Martin'}, 'related_titles': ['A Song of Ice and Fire']}
 ```
 ## `sv` module
 
