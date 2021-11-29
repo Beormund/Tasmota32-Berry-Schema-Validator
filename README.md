@@ -65,21 +65,18 @@ print(result.data)
 # {'related_titles.0': 'type must be string', 'related_titles.1': 'type must be string', 'author.age': 'is required'}
 # {'title': 'A Game of Thrones', 'author': {'name': 'George R. R. Marti'}, 'related_titles': ['A Song of Ice and Fire']}
 ```
-## `sv ` module
+## `sv` module
 
 
 After `import sv` all of the schema validation functionality can be accessed via the `sv` namespace.
 
 Function|Parameters and details
 :---|:---
-sv.validate|`(schema:map, data:string) -> Result`<br>Returns a Result object.<br><br> `Result.isValid` is a `bool` indicating success or failure.<br>`Result.errors` is a `map`. Keys indicate the property path; values describes the validation error.<br>`Result.data` is the cleaned data. Failed attributes are removed.<br><br>Example: `sv.validate({"type":"string", "size":3}, "abc")`
+sv.validate|`(schema:map, data:string) -> Result`<br>Returns a Result object.<br><br> `Result.isValid` is a `bool` indicating success or failure.<br>`Result.errors` is a `map`. Keys indicate the property path; values describe the validation error.<br>`Result.data` is the cleaned data. Failed attributes are removed.<br><br>Example: `sv.validate({"type":"string", "size":3}, "abc")`
 sv.formats</a>|`() -> list`<br>Returns a list of registered formats<br><br>Example: `sv.formats() -> ["%H:%M", "email"]`
-sv.add_format|`(format:string, engine:[sv.regex, sv.time], label:string) -> nil`<br><br>Persists `format` to flash for future use. The `label` is used as the lookup key and is the value specified in the schema's format validator. The format validator uses the `engine` (currently either `sv.regex` or `sv.time`) to try and match data using the format. If `sv.regex` is specified, the format validator will treat `format` as a regex ccontaining regex conversion specifiers. If `sv.time` is specified, the format validator will interpret `format` as strftime conversion specifiers. <br><br>Examples:<br>`sv.add_format("^\\S+@\\S+$", sv.regex, "email")`<br>`sv.add_format("%H:%M", sv.time, "%H:%M")`<br><br>`var schema = \{"type": "string", "format": "email"}`<br>`var schema = \{"type": "string", "format": "%H:%M"}`
+sv.add_format|`(format:string, engine:[sv.regex, sv.time], label:string) -> nil`<br><br>Persists `format` to flash for future use. The `label` is used as the lookup key and is the value specified in the schema's format validator. The format validator uses the `engine` (currently either `sv.regex` or `sv.time`) to try and match data using the format. If `sv.regex` is specified, the format validator will treat `format` as a regex ccontaining regex conversion specifiers. If `sv.time` is specified, the format validator will interpret `format` as strftime conversion specifiers. <br><br>Examples:<br>`sv.add_format("^\\S+@\\S+$", sv.regex, "email")`<br>`sv.add_format("%H:%M", sv.time, "%H:%M")`<br><br>`var schema = {"type": "string", "format": "email"}`<br>`var schema = {"type": "string", "format": "%H:%M"}`
 sv.remove_format|`(label:string) -> nil`<br>Removes a format from flash using `label`.<br><br>Example: `sv.remove_format('email')`
- |
-
-
-
+ 
 ## Validators
 
 ### type
