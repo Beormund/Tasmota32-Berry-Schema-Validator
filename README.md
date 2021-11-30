@@ -57,13 +57,22 @@ var data = {
 }
 
 var result = sv.validate(schema, data)
-print(result.isValid)
-print(result.errors)
-print(result.data)
-
-# false
-# {'related_titles.0': 'type must be string', 'related_titles.1': 'type must be string', 'author.age': 'is required'}
-# {'title': 'A Game of Thrones', 'author': {'name': 'George R. R. Martin'}, 'related_titles': ['A Song of Ice and Fire']}
+print(result)
+# {
+#   'is_valid': false, 
+#   'data': {
+#     'title': 'A Game of Thrones', 
+#     'author': {
+#       'name': 'George R. R. Martin'
+#     }, 
+#     'related_titles': ['A Song of Ice and Fire']
+#   }, 
+#   'errors': {
+#     'related_titles.0': 'type must be string', 
+#     'related_titles.1': 'type must be string', 
+#     'author.age': 'is required'
+#   }
+# }
 ```
 ## `sv` module
 
@@ -72,7 +81,7 @@ After `import sv` all of the schema validation functionality can be accessed via
 
 Function|Parameters and details
 :---|:---
-sv.validate|`(schema:map, data:string) -> Result`<br>Returns a Result object.<br><br> `Result.isValid` is a `bool` indicating success or failure.<br>`Result.errors` is a `map`. Keys indicate the property path; values describe the validation error.<br>`Result.data` is the cleaned data. Failed attributes are removed.<br><br>Example: `sv.validate({"type":"string", "size":3}, "abc")`
+sv.validate|`(schema:map, data:string) -> map`<br>Returns a result as `map`.<br><br> `is_valid` is a `bool` indicating success or failure.<br>`errors` is a `map`. Keys indicate the property path; values describe the validation error.<br>`data` is the cleaned data. Failed attributes are removed.<br><br>Example: `sv.validate({"type":"string", "size":3}, "abc")`
 sv.formats</a>|`() -> list`<br>Returns a list of registered formats<br><br>Example: `sv.formats() -> ["%H:%M", "email"]`
 sv.add_format|`(format:string, engine:[sv.regex, sv.time], label:string) -> nil`<br><br>Persists `format` to flash for future use. The `label` is used as the lookup key and is the value specified in the schema's format validator. The format validator uses the `engine` (currently either `sv.regex` or `sv.time`) to try and match data using the format. If `sv.regex` is specified, the format validator will treat `format` as a regex ccontaining regex conversion specifiers. If `sv.time` is specified, the format validator will interpret `format` as strftime conversion specifiers. <br><br>Examples:<br>`sv.add_format("^\\S+@\\S+$", sv.regex, "email")`<br>`sv.add_format("%H:%M", sv.time, "%H:%M")`<br><br>`var schema = {"type": "string", "format": "email"}`<br>`var schema = {"type": "string", "format": "%H:%M"}`
 sv.remove_format|`(label:string) -> nil`<br>Removes a format from flash using `label`.<br><br>Example: `sv.remove_format('email')`
@@ -111,7 +120,7 @@ Invalid object:
 }
 ```
 ### required
-* `boolean` Validates that property exists and not nil.
+* `bool` Validates that property exists and not nil.
 
 Example of schema:
 ```json
@@ -192,7 +201,7 @@ Invalid object:
 ```
 
 ### items
-* `map` Declares schema for list items. Applies only to `type: "list"`.
+* `map` Declares schema for list items. Applies only to type: `list`.
 
 Example of schema:
 ```json
@@ -349,26 +358,38 @@ var data = {
 }
 
 var result = sv.validate(schema, data)
-print(result.isValid)
-print(result.errors)
-print(result.data)
-# true
-# {}
-# {'id': 9, 'fruit': 'apple', 'off': '10:30', 'days': [1, 0, 1, 1, 1, 1, 0], 'zones': [1, 0, 1], 'nested': {'prop1': [1, 2, 3, 4, 5, 6]}, 'enabled': true, 'on': '14:15'}
+print(result)
+# {
+#     'is_valid': true, 
+#     'data': {
+#         'id': 9, 
+#         'fruit': 'apple', 
+#         'off': '10:30', 
+#         'days': [1, 0, 1, 1, 1, 1, 0], 
+#         'zones': [1, 0, 1], 
+#         'nested': {
+#             'prop1': [1, 2, 3, 4, 5, 6]
+#         }, 
+#         'enabled': true, 
+#         'on': '14:15'
+#     },
+#     'errors': {}
+# }
 
 var schema = {
   "type": "string",
   "size": 4 
 }
 var data = 3
-
 var result = sv.validate(schema,data)
-print(result.isValid)
-print(result.errors)
-print(result.data)
-# false
-# {'root': 'type must be string'}
-# nil
+print(result)
+# {
+#   'is_valid': false, 
+#   'data': nil, 
+#   'errors': {
+#     'root': 'type must be string'
+#    }
+# }
 
 var schema = [{
   "type": "int",
@@ -376,19 +397,20 @@ var schema = [{
   "size": 4
 }]
 var data = [4,2,3,3]
-
 var result = sv.validate(schema, data)
-print(result.isValid)
-print(result.errors)
-print(result.data)
-# false
-# {'0': 'Values must be [1, 2, 3]'}
-# [2, 3, 3]
+print(result)
+# {
+#   'is_valid': false, 
+#   'data': [2, 3, 3], 
+#   'errors': {
+#     '0': 'Values must be [1, 2, 3]'
+#   }
+# }
 
 sv.add_format("^\\S+@\\S+$", sv.regex, "email")
 
 sv.formats()
-['%H:%M', 'email']
+# ['%H:%M', 'email']
 
 var schema = {
   "type": "string",
@@ -396,14 +418,15 @@ var schema = {
   "size": 5..50
 }
 var data = "johnsmith$notreal"
-
 var result = sv.validate(schema,data)
-print(result.isValid)
-print(result.errors)
-print(result.data)
-# false
-# {'root': 'Value does not match email'}
-# nil
+print(result)
+# {
+#   'is_valid': false, 
+#   'data': nil, 
+#   'errors': {
+#     'root': 'Value does not match email'
+#   }
+# }
 
 sv.remove_format("email")
 
@@ -413,13 +436,12 @@ var schema = {
   "size": 5..50
 }
 var data = "johnsmith@notreal.com"
-
 var result = sv.validate(schema,data)
-print(result.isValid)
-print(result.errors)
-print(result.data)
-# true
-# {}
-# johnsmith@notreal.com
+print(result)
+# {
+#   'is_valid': true, 
+#   'data': 'johnsmith@notreal.com', 
+#   'errors': {}
+# }
 ```
 

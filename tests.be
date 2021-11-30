@@ -65,12 +65,23 @@ var data = {
 }
 
 var result = sv.validate(schema, data)
-print(result.isValid)
-print(result.errors)
-print(result.data)
-# true
-# {}
-# {'id': 9, 'fruit': 'apple', 'off': '10:30', 'days': [1, 0, 1, 1, 1, 1, 0], 'zones': [1, 0, 1], 'nested': {'prop1': [1, 2, 3, 4, 5, 6]}, 'enabled': true, 'on': '14:15'}
+print(result)
+{
+    'is_valid': true, 
+    'data': {
+        'id': 9, 
+        'fruit': 'apple', 
+        'off': '10:30', 
+        'days': [1, 0, 1, 1, 1, 1, 0], 
+        'zones': [1, 0, 1], 
+        'nested': {
+            'prop1': [1, 2, 3, 4, 5, 6]
+        }, 
+        'enabled': true, 
+        'on': '14:15'
+    },
+    'errors': {}
+}
 
 var schema = {
     "type": "map",
@@ -117,12 +128,22 @@ var data = {
 }
 
 var result = sv.validate(schema, data)
-print(result.isValid)
-print(result.errors)
-print(result.data)
-# false
-# {'related_titles.0': 'type must be string', 'related_titles.1': 'type must be string', 'author.age': 'is required'}
-# {'title': 'A Game of Thrones', 'author': {'name': 'George R. R. Martin'}, 'related_titles': ['A Song of Ice and Fire']}
+print(result)
+{
+    'is_valid': false, 
+    'data': {
+        'title': 'A Game of Thrones', 
+        'author': {
+            'name': 'George R. R. Martin'
+        }, 
+        'related_titles': ['A Song of Ice and Fire']
+    }, 
+    'errors': {
+        'related_titles.0': 'type must be string', 
+        'related_titles.1': 'type must be string', 
+        'author.age': 'is required'
+    }
+}
 
 var schema = {
   "type": "string",
@@ -130,12 +151,12 @@ var schema = {
 }
 var data = 'test'
 var result = sv.validate(schema, data)
-print(result.isValid)
-print(result.errors)
-print(result.data)
-# true
-# {}
-# test
+print(result)
+{
+    'is_valid': true, 
+    'data': 'test', 
+    'errors': {}
+}
 
 var schema = {
   "type": "string",
@@ -143,12 +164,14 @@ var schema = {
 }
 var data = 3
 var result = sv.validate(schema,data)
-print(result.isValid)
-print(result.errors)
-print(result.data)
-# false
-# {'root': 'type must be string'}
-# nil
+print(result)
+{
+    'is_valid': false, 
+    'data': nil, 
+    'errors': {
+        'root': 'type must be string'
+    }
+}
 
 var schema = [{
   "type": "int",
@@ -157,13 +180,14 @@ var schema = [{
 }]
 var data = [4,2,3,3]
 var result = sv.validate(schema, data)
-print(result.isValid)
-print(result.errors)
-print(result.data)
-# false
-# {'0': 'Values must be [1, 2, 3]'}
-# [2, 3, 3]
-
+print(result)
+{
+    'is_valid': false, 
+    'data': [2, 3, 3], 
+    'errors': {
+        '0': 'Values must be [1, 2, 3]'
+    }
+}
 
 sv.add_format("^\\S+@\\S+$", sv.regex, "email")
 sv.formats()
@@ -176,12 +200,14 @@ var schema = {
 }
 var data = "johnsmith$notreal"
 var result = sv.validate(schema,data)
-print(result.isValid)
-print(result.errors)
-print(result.data)
-# false
-# {'root': 'Value does not match email'}
-# nil
+print(result)
+{
+    'is_valid': false, 
+    'data': nil, 
+    'errors': {
+        'root': 'Value does not match email'
+    }
+}
 
 sv.remove_format("email")
 
@@ -192,12 +218,12 @@ var schema = {
 }
 var data = "johnsmith@notreal.com"
 var result = sv.validate(schema,data)
-print(result.isValid)
-print(result.errors)
-print(result.data)
-# true
-# {}
-# johnsmith@notreal.com
+print(result)
+{
+    'is_valid': true, 
+    'data': 'johnsmith@notreal.com', 
+    'errors': {}
+}
 
 var schema = [{
   "type": "real",
@@ -205,12 +231,12 @@ var schema = [{
 }]
 var data = [4.3,2.2,3.4,3.7]
 var result = sv.validate(schema, data)
-print(result.isValid)
-print(result.errors)
-print(result.data)
-# true
-# {}
-# [4.3, 2.2, 3.4, 3.7]
+print(result)
+{
+    'is_valid': true, 
+    'data': [4.3, 2.2, 3.4, 3.7], 
+    'errors': {}
+}
 
 var schema = {
     "type": "map",
@@ -222,12 +248,14 @@ var schema = {
         }
     }
 }
-
 var data = {}
 var result = sv.validate(schema, data)
-print(result.isValid)
-print(result.errors)
-print(result.data)
-# false
-# {'title': 'is required'}
-# {}
+print(result)
+{
+    'is_valid': false, 
+    'data': {}, 
+    'errors': {
+        'title': 'is required'
+    }
+}
+

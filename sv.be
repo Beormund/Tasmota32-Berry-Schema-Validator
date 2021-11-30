@@ -1,12 +1,14 @@
-# Some of the code is a berry port of a javascript json validator by 
-# nitely: https://github.com/nitely/tiny-json-validator.
+# Some of the code is a berry port of a javascript json validator
+# by nitely: https://github.com/nitely/tiny-json-validator.
 # Thanks also to vitalets: https://github.com/vitalets/json-micro-schema for
-# The list shortcut syntax is based on vitalets' array shortcut syntax.
-# Please mention me if you find this useful. Thanks, Beormund (Shaun Brown)
+# the list shortcut syntax. Author: Beormund (Shaun Brown)
 
 import persist
 
 var sv = module('sv')
+
+sv.regex = 'regex'
+sv.time = 'strftime'
 
 def gettype(data)
     var t = type(data)
@@ -14,8 +16,6 @@ def gettype(data)
 end
 
 class PatternMatch
-    static regex = "regex"
-    static time = "strptime"
     static formats = {}
     static def load()
         if persist.has('sv_formats')
@@ -29,28 +29,6 @@ class PatternMatch
             }
             PatternMatch.formats = persist.sv_formats
         end
-    end
-    static def get_formats()
-        var l = []
-        for k: PatternMatch.formats.keys()
-            l.push(k)
-        end
-        return l 
-    end
-    static def add_format(pattern, engine, value)
-        if type(pattern) != 'string' return end
-        if type(value) != 'string' return end
-        if engine != PatternMatch.regex && engine != PatternMatch.time
-            return
-        end
-        PatternMatch.formats.setitem(
-            value, {"validator": engine, "pattern": pattern}
-        )
-        persist.save()
-    end
-    static def remove_format(key)
-        PatternMatch.formats.remove(key)
-        persist.save()
     end
 end
 
@@ -71,8 +49,8 @@ class FormatValidator
     end
     def invoke(engine)
         return {
-            PatternMatch.regex: self.regex,
-            PatternMatch.time: self.strptime
+            sv.regex: self.regex,
+            sv.time: self.strptime
         }.find(engine)
     end
     def regex(pattern, value)
@@ -177,22 +155,14 @@ class Validate
     end
 end
 
-class Result
-    var data, errors, isValid
-    def init(data, errors)
-        self.data = data
-        self.errors = errors
-        self.isValid = !self.errors.size()
-    end
-end
-
 class SchemaValidator
     var data, errors, path, val
-    def init(validate)
+    def init(schema, data)
         self.data = {}
         self.errors = {}
         self.path = []
         self.val = Validate()
+        self.visit({"root": schema}, {"root": data})
     end       
     def visit(parentNode, data, opt, cleanedData)
         data = data ? data : {}
@@ -256,22 +226,42 @@ class SchemaValidator
             self.data = cleanedData.find('root')
         end
         return self
-    end    
-end
-
-def validatorFactory(schema, data)
-    var validator = SchemaValidator()
-        .visit({"root": schema}, {"root": data})
-    return Result(validator.data, validator.errors)
+    end
+    def result()
+        return {
+            "is_valid": !self.errors.size(),
+            "errors": self.errors,
+            "data": self.data
+        }
+    end
 end
 
 # Load persisted regex patterns
 PatternMatch.load()
-# Exports
-sv.regex = PatternMatch.regex
-sv.time = PatternMatch.time
-sv.formats = PatternMatch.get_formats
-sv.add_format = PatternMatch.add_format
-sv.remove_format = PatternMatch.remove_format
-sv.validate = validatorFactory
+
+sv.formats = def() 
+    var l = []
+    for k: PatternMatch.formats.keys()
+        l.push(k)
+    end
+    return l 
+end
+sv.add_format = def(pattern, engine, value)
+    if type(pattern) != 'string' return end
+    if type(value) != 'string' return end
+    if engine != sv.regex && engine != sv.time
+        return
+    end
+    PatternMatch.formats.setitem(
+        value, {"validator": engine, "pattern": pattern}
+    )
+    persist.save()
+end
+sv.remove_format = def(key)
+    PatternMatch.formats.remove(key)
+    persist.save()
+end
+sv.validate = def(schema, data) 
+    return SchemaValidator(schema, data).result() 
+end
 return sv
