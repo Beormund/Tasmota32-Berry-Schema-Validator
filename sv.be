@@ -88,15 +88,16 @@ class Validate
         if self.value == 'undefined'
             return true
         end
-        if !self.isValidType()
+        var tv = gettype(self.value)
+        if !self.isValidType(tv)
             self.addError('type must be ' .. self.node['type'])
             return false;
         end
-        if !self.isValidSize()
+        if !self.isValidSize(tv)
             self.addError('size must be '.. self.node['size'])
             return false
         end
-        if !self.isValidValues()
+        if !self.isValidValues(tv)
             self.addError('Values must be '.. self.node['values'])
             return false
         end
@@ -110,18 +111,17 @@ class Validate
         var required = self.node.find('required')
         return !(self.value == 'undefined' && required)
     end
-    def isValidType()
+    def isValidType(tv)
         if !self.node.contains('type')
             return true
         end
-        return gettype(self.value) == self.node['type']
+        return tv == self.node['type']
     end
-    def isValidSize()
+    def isValidSize(tv)
         if !self.node.contains('size') 
             return true
         end
-        var valType = gettype(self.value)
-        if valType != 'list' && valType != 'string'
+        if tv != 'list' && tv != 'string'
             return true
         end
         var sizeType = gettype(self.node['size'])
@@ -135,15 +135,26 @@ class Validate
             return false
         end
     end
-    def isValidValues()
+    def isValidValues(tv)
         if !self.node.contains('values')
             return true
         end
-        if gettype(self.node['values']) != 'list'
+        var nv = self.node['values']
+        if gettype(nv) != 'list'
             self.addError("schema values must be list")
             return false
         end
-        return self.node['values'].find(self.value) != nil
+        var num = (tv == 'int' || tv == 'real')
+        for v: nv
+          if num && isinstance(v, range) 
+            && self.value >= v.lower() 
+            && self.value <= v.upper()
+            return true
+          elif self.value == v
+            return true
+          end
+        end
+        return false
     end
     def isValidFormat()
         if !self.node.contains('format')

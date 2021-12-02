@@ -174,7 +174,7 @@ Invalid object:
 ```
 
 ### values
-* `list` Validates that property has one of the provided values.
+* `list` Validates that property has one of the provided values. If schema type is `int` or `real` the list of values can be a `range`, e.g., [0,1,10..15] validates if the property is 0, 1 or between 10 and 15.
 
 Example of schema:
 ```json
