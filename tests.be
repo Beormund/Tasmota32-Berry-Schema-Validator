@@ -11,7 +11,7 @@ var schema = {
                     },
                     "on": {
                         "type": "string",
-                        "size": 5..7,
+                        "size": 5,
                         "format": "%H:%M" 
                     },
                     "off": {
@@ -222,6 +222,21 @@ print(result)
 # {
 #     'is_valid': true, 
 #     'data': 'johnsmith@notreal.com', 
+#     'errors': {}
+# }
+
+sv.add_format("%FT%T", sv.time, "iso-8601")
+
+var schema = {
+  "type": "string",
+  "format": "iso-8601"
+}
+var data = "2021-12-12T23:31:00"
+var result = sv.validate(schema,data)
+print(result)
+# {
+#     'is_valid': true, 
+#     'data': '2021-12-12T23:31:00', 
 #     'errors': {}
 # }
 

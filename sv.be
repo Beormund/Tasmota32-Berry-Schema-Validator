@@ -8,7 +8,7 @@ import persist
 var sv = module('sv')
 
 sv.regex = 'regex'
-sv.time = 'strftime'
+sv.time = 'time'
 
 def gettype(data)
     var t = type(data)
@@ -23,8 +23,8 @@ class PatternMatch
         else
             persist.sv_formats = {
                 "%H:%M": {
-                    "validator": "regex",
-                    "pattern": "^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$"
+                    "validator": "time",
+                    "pattern": "%H:%M"
                 }
             }
             PatternMatch.formats = persist.sv_formats
@@ -62,8 +62,12 @@ class FormatValidator
         return self._compiled[pattern].match(value)
     end
     def strptime(pattern, value)
-        return false
-        # For future implementation of strptime()
+        var t = tasmota.strptime(value, pattern)
+        if t && t['hour'] < 24 && t['min'] < 60 && t['sec'] < 60
+            return true
+        else
+            return false
+        end
     end
 end
    
