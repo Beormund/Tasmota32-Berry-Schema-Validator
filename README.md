@@ -9,7 +9,7 @@
 
 ## Getting Started  
 
-```python
+```berry
 import sv
 
 var schema = {
@@ -98,7 +98,7 @@ sv.remove_format|`(label:string) -> nil`<br>Removes a format from flash using `l
   * `"list"`
 
 Example of schema:
-```json
+```berry
 {
   "productName": {
     "type": "string"
@@ -107,14 +107,14 @@ Example of schema:
 ```
 
 Valid object:
-```json
+```berry
 {
   "productName": "ESP32"
 }
 ```
 
 Invalid object:
-```json
+```berry
 {
   "productName": 42
 }
@@ -123,7 +123,7 @@ Invalid object:
 * `bool` Validates that property exists and not nil.
 
 Example of schema:
-```json
+```berry
 {
   "productName": {
     "required": true
@@ -132,14 +132,14 @@ Example of schema:
 ```
 
 Valid object:
-```json
+```berry
 {
   "productName": "ESP32"
 }
 ```
 
 Invalid object:
-```json
+```berry
 {
   "productName": nil
 }
@@ -150,7 +150,7 @@ Invalid object:
   Applies to `string` or `list`.
 
 Example of schema:
-```json
+```berry
 {
   "productName": {
     "type": "string",
@@ -160,14 +160,14 @@ Example of schema:
 ```
 
 Valid object:
-```json
+```berry
 {
   "productName": "ESP32 Relay"
 }
 ```
 
 Invalid object:
-```json
+```berry
 {
   "productName": "very long product name"
 }
@@ -177,7 +177,7 @@ Invalid object:
 * `list` Validates that property has one of the provided values. If schema type is `int` or `real` the list of values can be a `range`, e.g., [0,1,10..15] validates if the property is 0, 1 or between 10 and 15.
 
 Example of schema:
-```json
+```berry
 {
   "productName": {
     "type": "string",
@@ -187,14 +187,14 @@ Example of schema:
 ```
 
 Valid object:
-```json
+```berry
 {
   "productName": "android"
 }
 ```
 
 Invalid object:
-```json
+```berry
 {
   "productName": "iphone"
 }
@@ -204,7 +204,7 @@ Invalid object:
 * `map` Declares schema for list items. Applies only to type: `list`.
 
 Example of schema:
-```json
+```berry
 {
   "tags": {
     "type": "list",
@@ -216,14 +216,14 @@ Example of schema:
 ```
 
 Valid object:
-```json
+```berry
 {
   "tags": [ "mobile", "phone" ]
 }
 ```
 
 Invalid object:
-```json
+```berry
 {
   "tags": [ 42 ]
 }
@@ -234,7 +234,7 @@ Invalid object:
 
 Example of scheme:
 
-```json
+```berry
 {
   "time": {
     "type": "string",
@@ -244,14 +244,14 @@ Example of scheme:
 ```
 
 Valid object:
-```json
+```berry
 {
   "time": "10:30"
 }
 ```
 
 Invalid object:
-```json
+```berry
 {
   "productName": "00,15"
 }
@@ -264,7 +264,7 @@ The validator will compile and cache formats should they be used multiple times 
 ### Lists
 Lists can be declared in two ways:
 1. full syntax using `items` validator:
-    ```json
+    ```berry
     {
       "tags": {
         "type": "list",
@@ -275,7 +275,7 @@ Lists can be declared in two ways:
     }
     ```
 2. shortcut syntax using `[]` (to imply a list) with single element:
-    ```json
+    ```berry
     {
       "tags": [{
         "type": "string"
@@ -293,7 +293,7 @@ The validator expands this shortcut into the full form. Both variants are identi
 
 ## Examples
 
-```python
+```berry
  import sv
 
  var schema = {
